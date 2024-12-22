@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Plaster&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <canvas id="bubbleCanvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999;"></canvas>
+    <!-- 방울 효과용 Canvas -->
+    <div class="background-overlay"></div>
+    <h1>Portfolio</h1>
+    <div class="puzzle-container">
+        <div class="puzzle-set" data-image="./work1/1.png" data-html="1.html"></div>
+        <div class="puzzle-set" data-image="./work1/6-2.png" data-html="6.html"></div>
+        <div class="puzzle-set" data-image="./work1/3.png" data-html="3.html"></div>
+        <div class="puzzle-set" data-image="./work1/4.png" data-html="4.html"></div>
+        <div class="puzzle-set" data-image="./work1/5-4.png" data-html="5.html"></div>
+        <div class="puzzle-set" data-image="./work1/2.png" data-html="2.html"></div>
+        
+    </div>
+    <div class="fixed-circle">
+        <span class="circle-text">I'M</span>
+        <div class="hover-text">
+            안녕하세요, 시각디자인 21학번 정채원 입니다.  
+            저의 작업 방식은 조각이 하나하나 맞춰지면서 전체 그림이 드러나는 '퍼즐' 같다고 생각했습니다.  
+            퍼즐을 완성했을 때 느끼는 성취감처럼, 저는 프로젝트가 완성될 때마다 큰 만족감을 얻습니다.  
+            이러한 과정이 저를 성장시키고, 도전에 대한 두려움을 덜어줍니다. 
+            매 프로젝트가 새로운 조각이 되고 그 조각들이 모여 지금의 저를 만들어가고 있습니다.  
+            앞으로도 퍼즐을 맞춰가듯 다양한 경험을 모아서 저만의 그림을 완성해 나가고자 합니다.
+        </div>
+    </div>
+
+    <button id="darkModeToggle" class="dark-mode-btn">🌙</button>
+    <script src="script.js"></script>
+
+    <script src="script.js"></script>
+    <script>
+        // Bubble effect code starts here
+        document.addEventListener("DOMContentLoaded", () => {
+            const canvas = document.getElementById("bubbleCanvas");
+            const ctx = canvas.getContext("2d");
+
+            // 캔버스 크기 초기화
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resizeCanvas();
+
+            const bubbles = []; // 방울 데이터를 저장할 배열
+            let lastBubbleTime = 0; // 마지막 방울 생성 시간 저장
+
+            // 방울 클래스 정의
+            class Bubble {
+                constructor(x, y) {
+                    this.x = x; // 초기 x 좌표
+                    this.y = y; // 초기 y 좌표
+                    this.size = Math.random() * 10 + 5; // 크기 (5 ~ 15px)
+                    this.opacity = 0.2; // 초기 투명도 (20%)
+                    this.dx = (Math.random() - 0.5) * 1; // x 축 속도 (±1)
+                    this.dy = Math.random() * -0.3 - 0.3; // y 축 속도 (작게 수정: -0.3 ~ -0.6)
+                    this.lifetime = 120; // 생명주기 (프레임 수)
+                }
+
+                // 방울을 네모로 그리기
+                draw() {
+                    ctx.beginPath();
+                    ctx.rect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size); // 사각형으로 변경
+
+                    // 방울 내부
+                    ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                    ctx.fill();
+
+                    // 검정색 외곽선
+                    ctx.strokeStyle = `rgba(0, 0, 0, 0.25)`; // 외곽선 투명도 10%
+                    ctx.lineWidth = 0.5;
+                    ctx.stroke();
+                }
+
+                // 방울 업데이트
+                update() {
+                    this.x += this.dx; // x 이동
+                    this.y += this.dy; // y 이동
+                    this.lifetime--; // 생명주기 감소
+                }
+            }
+
+            // 방울 애니메이션 처리
+            function animateBubbles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height); // 캔버스 초기화
+
+                for (let i = bubbles.length - 1; i >= 0; i--) {
+                    const bubble = bubbles[i];
+                    bubble.update();
+                    bubble.draw();
+
+                    // 생명주기가 끝난 방울 제거
+                    if (bubble.lifetime <= 0) {
+                        bubbles.splice(i, 1);
+                    }
+                }
+
+                requestAnimationFrame(animateBubbles); // 다음 프레임 요청
+            }
+
+            // 마우스 이동 이벤트
+            window.addEventListener("mousemove", (e) => {
+                const now = Date.now();
+                if (now - lastBubbleTime > 300) { // 300ms마다 방울 생성
+                    bubbles.push(new Bubble(e.clientX, e.clientY));
+                    lastBubbleTime = now;
+                }
+            });
+
+            // 창 크기 변경 시 캔버스 크기 재설정
+            window.addEventListener("resize", resizeCanvas);
+
+            animateBubbles(); // 애니메이션 시작
+        });
+
+        // 다크 모드 토글 스크립트
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+
+        // 로컬스토리지에서 다크 모드 상태 확인
+        const savedMode = localStorage.getItem('darkMode');
+        if (savedMode === 'enabled') {
+            body.classList.add('dark-mode');
+        }
+
+        // 다크 모드 토글 기능
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+
+            // 다크 모드 상태를 로컬스토리지에 저장
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        });
+    </script>
+</body>
+</html>

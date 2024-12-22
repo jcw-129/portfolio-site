@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일단 춤 추시오</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        img {
+            max-width: 80%; 
+            max-height: 80%;
+            object-fit: contain;
+            z-index: 2; 
+            border: none; 
+            -webkit-user-drag: none; /* Safari에서 드래그 방지 */
+            user-select: none; /* 텍스트 선택 방지 */
+            pointer-events: all; /* 클릭 이벤트가 정상적으로 작동하도록 설정 */
+        }
+
+        .overlay {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 33.33%;  
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0; 
+            transition: opacity 0.3s; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #left-overlay {
+            left: 0;
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));
+        }
+
+        #right-overlay {
+            right: 0;
+            background: linear-gradient(to left, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));
+        }
+
+        .overlay img {
+            width: 50px; 
+            height: auto;
+            object-fit: contain;
+        }
+
+        .visible {
+            opacity: 1;
+        }
+
+        #progress-indicator {
+            position: absolute;
+            bottom: 50px; /* 하단에서 10px 간격 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px; /* 점 사이 간격 */
+            z-index: 3; /* 점이 이미지보다 위에 표시되도록 설정 */
+        }
+
+        .indicator-dot {
+            width: 10px;
+            height: 10px;
+            border: 0px solid rgb(110, 110, 110);
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+            border-radius: 10%;
+            background-color: transparent;
+            transition: background-color 0.3s;
+        }
+
+        .indicator-dot.active {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <img id="original-image" src="./work1/3.png" alt="원본 이미지">
+
+    <!-- 좌우 오버레이 -->
+    <div id="left-overlay" class="overlay">
+        <img src="./work1/left.png" alt="Left Overlay Image">
+    </div>
+    <div id="right-overlay" class="overlay">
+        <img src="./work1/right.png" alt="Right Overlay Image">
+    </div>
+
+    <!-- 진행 상태 표시 -->
+    <div id="progress-indicator"></div>
+
+    <script>
+        const images = [
+            './work1/3-1.png',
+            './work1/3-2.png',
+            './work1/3-3.png', 
+            './work1/3.png'
+        ];
+
+        let currentIndex = 0;
+
+        const imgElement = document.getElementById('original-image');
+        const leftOverlay = document.getElementById('left-overlay');
+        const rightOverlay = document.getElementById('right-overlay');
+        const progressIndicator = document.getElementById('progress-indicator');
+
+        function updateImage() {
+            imgElement.src = images[currentIndex];
+            updateProgressIndicator();
+        }
+
+        function updateProgressIndicator() {
+            // 점 상태를 초기화
+            progressIndicator.innerHTML = '';
+
+            images.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.classList.add('indicator-dot');
+                if (index === currentIndex) {
+                    dot.classList.add('active');
+                }
+                progressIndicator.appendChild(dot);
+            });
+        }
+
+        // 마우스 위치에 따라 오버레이 표시
+        document.addEventListener('mousemove', (event) => {
+            const screenWidth = window.innerWidth;
+            const mouseX = event.clientX;
+
+            const leftBoundary = screenWidth / 3;
+            const rightBoundary = 2 * screenWidth / 3;
+
+            if (mouseX < leftBoundary) {
+                leftOverlay.classList.add('visible');
+                rightOverlay.classList.remove('visible');
+            } else if (mouseX > rightBoundary) {
+                rightOverlay.classList.add('visible');
+                leftOverlay.classList.remove('visible');
+            } else {
+                leftOverlay.classList.remove('visible');
+                rightOverlay.classList.remove('visible');
+            }
+        });
+
+        // 클릭 이벤트로 이미지 전환
+        document.body.addEventListener('click', (event) => {
+            const screenWidth = window.innerWidth;
+            const clickX = event.clientX;
+
+            const leftBoundary = screenWidth / 3;
+            const rightBoundary = 2 * screenWidth / 3;
+
+            if (clickX < leftBoundary) {
+                // 왼쪽 영역 클릭: 이전 이미지
+                currentIndex = (currentIndex > 0) ? currentIndex - 1 : images.length - 1;
+                updateImage();
+            } else if (clickX > rightBoundary) {
+                // 오른쪽 영역 클릭: 다음 이미지
+                currentIndex = (currentIndex < images.length - 1) ? currentIndex + 1 : 0;
+                updateImage();
+            }
+            // 가운데 영역은 아무 일도 발생하지 않음
+        });
+
+        // 페이지 로드 시 초기 이미지 및 점 상태 설정
+        window.onload = () => {
+            updateImage();
+        };
+    </script>
+</body>
+</html>

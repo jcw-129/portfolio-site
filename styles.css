@@ -1,0 +1,362 @@
+/* 기본 스타일 설정 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    line-height: 2.2;
+    word-break: keep-all;
+}
+
+body {
+    font-family: 'Plaster', Arial, sans-serif;
+    font-size: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    user-select: none;
+    overflow: auto;
+    text-transform: uppercase; /* 모든 텍스트를 대문자로 변환 */
+    color: #313131;
+    margin-top: 150px;
+    margin-bottom: 250px;
+}
+
+/* 다크 모드 버튼 기본 스타일 */
+#darkModeToggle {
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    background-color: transparent;
+    border: none;
+    font-size: 28px;
+    
+    cursor: pointer;
+    z-index: 9995; /* 다른 요소들 위에 표시 */
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* 다크 모드 활성화 시 버튼 투명도 100% */
+#darkModeToggle.dark-mode-active {
+    opacity: 1;
+}
+
+/* 호버 효과 */
+#darkModeToggle:hover {
+    transform: scale(1.1);
+    color: #f1f1f1;
+}
+
+
+/* 다크 모드 스타일 */
+body.dark-mode {
+    color: #f1f1f1;
+    background-color: #222;
+}
+
+body.dark-mode .background-overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .puzzle-set:hover {
+    border-color: #aaa;
+}
+
+/* 초기 상태 (기본 모드)에서 달 이모지 색상 */
+#darkModeToggle {
+    color: #ccc; /* 회색 */
+    transition: color 0.3s, transform 0.3s;
+}
+
+/* 다크 모드 활성화 상태에서 달 이모지 색상 */
+#darkModeToggle.dark-mode-active {
+    color: #ffeb3b; /* 노란색 */
+}
+
+
+
+
+h1 {
+    position: fixed; /* 고정된 위치 */
+    top: 0; /* 상단에 위치 */
+    left: 0; /* 왼쪽에 위치 */
+    right: 0; /* 오른쪽에 위치 */
+    background-color: rgba(255, 255, 255, 0.5); 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 약간의 그림자 효과 */
+    text-align: center; /* 중앙 정렬 */
+    z-index: 1000; /* 다른 요소 위에 표시 */
+    margin: 100; /* 기본 마진 제거 */
+    padding: 14px 0; /* 상하 패딩 추가 */
+    backdrop-filter: blur(4px);
+}
+
+.background-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white; /* 전체 배경을 화이트로 */
+    z-index: 9998; /* 인트로 애니메이션보다 아래에 위치 */
+    opacity: 1; /* 초기 투명도 */
+    transition: opacity 1.5s ease; /* 부드러운 전환 효과 */
+}
+
+.puzzle-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 180px; /* 퍼즐 세트 사이의 간격을 넓힘 */
+    justify-content: center;
+    left: 100;
+    top: 100;
+}
+
+.puzzle-set {
+    position: relative;
+    border: 3px outset #ccc;
+    max-width: 400px;
+    max-height: 700px;
+    aspect-ratio: 1 / 1;
+}
+
+/* 퍼즐 배경 크기 조정 */
+.puzzle-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%; /* 퍼즐 배경을 100%로 설정 */
+    height: 100%; /* 퍼즐 배경을 100%로 설정 */
+    background-size: contain; /* 이미지 크기를 퍼즐 세트 크기에 맞게 확장 */
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.1;
+    filter: blur(0.5px);
+    z-index: 0;
+}
+
+/* 퍼즐 조각 크기 조정 */
+.piece {
+    position: absolute;
+    width: 150px; /* 퍼즐 조각 크기 확대 */
+    height: 150px; /* 퍼즐 조각 크기 확대 */
+    background-size: cover; /* 퍼즐 조각의 배경 이미지를 크기에 맞게 확대 */
+    border: 1px solid #ddd; /* 테두리 두께 증가 */
+    cursor: pointer;
+    transition: left 0.1s, top 0.1s;
+    opacity: 1;
+    z-index: 1;
+}
+
+/* 퍼즐 세트 크기 조정 */
+.puzzle-set {
+    position: relative;
+    width: 600px; /* 퍼즐 세트 크기 확대 */
+    height: 600px; /* 퍼즐 세트 크기 확대 */
+    border: 3px outset #ccc;
+    aspect-ratio: 1 / 1; /* 가로세로 비율 유지 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+.piece.fixed {
+    cursor: default;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.completed {
+    position: relative;
+}
+
+.completed::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.05);
+    pointer-events: none;
+}
+
+.original-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+    animation: fadeIn 1s forwards;
+}
+
+.intro-puzzle-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 300px;
+    height: 300px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    z-index: 9999;
+}
+
+.intro-piece {
+    width: 100px;
+    height: 100px;
+    border: 2px solid #ddd;
+    box-sizing: border-box;
+    opacity: 1;
+    animation: fadeIn 0.5s forwards;
+}
+
+.intro-piece:nth-child(9) {
+    visibility: hidden;
+}
+
+.intro-hide {
+    animation: fadeOut 2s forwards;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+/* 새로운 애니메이션을 위한 스타일 */
+.animation-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 0;
+    z-index: 10000; /* 다른 요소들 위에 표시 */
+}
+
+.block {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+    border: 2px solid #ddd; /* 1px 보더 추가 */
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.fade-out {
+    animation: fadeOut 1s forwards; /* 사라지는 애니메이션 추가 */
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+* {
+    cursor: url('./work1/finger.png') 8 8, auto !important;
+    border: none;  
+}
+
+a, button, input, select, textarea {
+    cursor: url('./work1/finger.png') 8 8, auto !important;
+    border: none; 
+}
+
+a:hover, button:hover, input:hover, select:hover, textarea:hover {
+    cursor: url('./work1/finger.png') 8 8, auto !important;
+    border: none;  
+}
+
+.fixed-circle {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    width: 60px;
+    height: 60px;
+    background-color: white;
+    border-radius: 5%; /* 완전한 원형 */
+    box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.2); /* 내부 그림자 효과 */
+    transition: all 0.3s ease; /* 부드러운 전환 효과 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* 텍스트가 원 크기를 넘지 않도록 설정 */
+    color: black; /* 기본 글자 색상 */
+    font-family: 'Noto Sans KR', sans-serif; /* 폰트 설정 */
+    cursor: url('./work1/finger.png') 8 8, auto; /* 네모 칸에서도 동일한 커서 이미지 */
+    z-index: 9989;
+}
+
+.circle-text {
+    font-size: 18px; /* "I" 글자 크기 */
+    font-weight: bold; /* 글자 두께 */
+    font-family: 'Plaster', Arial, sans-serif;
+}
+
+.hover-text {
+    display: none; /* 기본 상태에서는 숨김 */
+    font-size: 5px;
+    font-family: 'Noto Sans KR', sans-serif; /* Noto Sans KR 폰트 적용 */
+    padding: 8px;
+    text-align: left; /* 긴 텍스트 가독성을 위해 왼쪽 정렬 */
+    line-height: 2.2; /* 줄 간격 */
+}
+
+.fixed-circle:hover {
+    width: 480px;
+    height: 200px;
+    border-radius: 10px; /* 네모로 변경 */
+    color: black; /* 텍스트 표시 */
+    background-color: rgba(241, 241, 241, 0.6); /* 살짝 어두운 배경 */
+    z-index: 10001; /* 호버 상태에서도 퍼즐 요소 위에 표시 */
+    cursor: url('./work1/finger.png') 8 8, auto; /* 네모 칸에서도 동일한 커서 이미지 */
+    backdrop-filter: blur(6px);
+    border: 50px;
+
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    /*box-shadow: inset 0 8px 12px rgba(0, 0, 0, 0.3); /* 내부 그림자 추가 */
+}
+
+.fixed-circle:hover .hover-text {
+    font-size: 12px;
+    display: block; /* 호버 시 텍스트 표시 */
+    color: black;
+    z-index: 10002; /* 텍스트도 퍼즐보다 위에 표시 */
+}
+
+.fixed-circle:hover .circle-text {
+    opacity: 0; /* 호버 시 "I" 숨기기 */
+}
